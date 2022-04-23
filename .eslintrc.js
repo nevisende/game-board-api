@@ -14,5 +14,6 @@ module.exports = {
   rules: {
     semi: 0,
     'no-console': 0,
+    'import/no-unresolved': 0,
   },
 };
