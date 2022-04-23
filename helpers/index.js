@@ -1,4 +1,4 @@
-const index = require('../index')
+const indexPage = require('../index')
 
 function resJsonLengthAndData(res, doc) {
   res.status(200).json({
@@ -9,15 +9,15 @@ function resJsonLengthAndData(res, doc) {
 }
 
 async function getTopHundredPlayerFromRedis() {
-  const keys = await index.redisClient.keys('Player*')
+  const keys = await indexPage.redisClient.keys('Player*')
   const hundredPlayers = [];
 
-  for (let i = 0; i < keys.length; i++) {
-    const player = await index.redisClient.get(keys[i])
+  for (let i = 0; i < keys.length; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    const player = await indexPage.redisClient.get(keys[i])
     hundredPlayers.push(JSON.parse(player));
   }
 
-  hundredPlayers.sort((a, b) => b.rank - a.rank).slice(0, 100)
-  return hundredPlayers
+  return (await Promise.all(hundredPlayers)).sort((a, b) => b.rank - a.rank).slice(0, 100)
 }
 module.exports = { resJsonLengthAndData, getTopHundredPlayerFromRedis }

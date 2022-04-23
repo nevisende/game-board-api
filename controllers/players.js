@@ -14,7 +14,7 @@ async function getHighHundredRanked(req, res) {
             today: 0,
             lastDay: 0,
           })
-          index.redisClient.set(`Players-${player.id}`, data)
+          index.redisClient.set(`Player-${player.id}`, data)
         })
       });
     }
