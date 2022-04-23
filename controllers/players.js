@@ -1,18 +1,13 @@
 const Player = require('../models/players')
 const randomWords = require('random-words');
 const index = require('../index')
-const helpers = require('../helpers')
+const { resJsonLengthAndData, getTopHundredPlayerFromRedis } = require('../helpers')
 
 
 async function getHighHundredRanked(req, res) { 
   try {
-    let hundredPlayers;
-
-    if (await index.redisClient.dbSize() > 0) {
-      hundredPlayers = await helpers.getTopHundredPlayerFromRedis()
-      helpers.resJsonLengthAndData(res, hundredPlayers)
-    } else {
-       await Player.find({ isThisWeekActive: true }).exec((err, players) => {
+    if (await index.redisClient.dbSize() == 0) {
+     await Player.find({ isThisWeekActive: true }).exec((err, players) => {
          players.forEach(player => {
           const data = JSON.stringify({
             playerId: player.id,
@@ -24,9 +19,11 @@ async function getHighHundredRanked(req, res) {
         })
         
        });
-      hundredPlayers = await helpers.getTopHundredPlayerFromRedis()
-      helpers.resJsonLengthAndData(res, hundredPlayers)
     }
+       
+      const hundredPlayers = await getTopHundredPlayerFromRedis()
+      resJsonLengthAndData(res, hundredPlayers)
+    
   } catch (err) {
     console.log(err)
     res.status(404).json({ status: 'fail' })
