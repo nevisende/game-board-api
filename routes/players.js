@@ -1,5 +1,6 @@
-const express = require('express');
+const express = require('express')
 const { getHighHundredRanked, createFakePlayers, deleteAllPlayers } = require('../controllers/players')
+
 const router = express.Router()
 
 router
