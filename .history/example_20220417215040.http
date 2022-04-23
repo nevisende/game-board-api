@@ -1,0 +1,16 @@
+GET http://localhost:4400/api/v1/players
+
+### Get all players
+GET http://localhost:4400/players HTTP/1.1
+
+### Create ${user_numbers} new fake players 
+POST http://localhost:4400/api/v1/players HTTP/1.1
+content-type: application/json
+
+{
+  "user_numbers" : 20,
+  "is_this_week_active" : true
+}
+
+### Delete all players
+DELETE  http://localhost:4400/api/v1/players HTTP/1.1

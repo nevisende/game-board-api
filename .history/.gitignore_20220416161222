@@ -1,0 +1,5 @@
+# ignore the npm packages folder
+node_modules/
+
+# ignore the folders created by VS Code
+/.history

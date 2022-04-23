@@ -1,0 +1,15 @@
+GET http://localhost:4400/
+
+###
+GET http://localhost:4400/players HTTP/1.1
+
+###
+POST http://localhost:4400/players HTTP/1.1
+content-type: application/json
+
+{
+  user_numbers: 10
+}
+
+###
+DELETE  http://localhost:4400/players HTTP/1.1

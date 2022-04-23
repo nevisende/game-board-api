@@ -1,0 +1,7 @@
+import  
+
+class Users {
+  getAll() { 
+
+  }
+}
