@@ -1,0 +1,26 @@
+### Get the index route
+GET http://localhost:4400/api/v1/
+
+### Get players: optional queries: page { number }, size { number }
+GET http://localhost:4400/api/v1/players
+
+### Create fake players: optional queries: user_numbers { number } , is_this_week_active { boolean }
+POST http://localhost:4400/api/v1/players
+
+### DELETE all players
+DELETE http://localhost:4400/api/v1/players
+
+
+### Get best ranked 100 players
+GET http://localhost:4400/api/v1/ranked-players
+
+### Get specified player by id
+GET http://localhost:4400/api/v1/ranked-players/{id}
+### Increase a user's rank: optional queries (default: 5): rank_amount { number }
+PATCH  http://localhost:4400/api/v1/ranked-players/increase_rank
+### Decrease a user's  rank: optional queries (default: 5): rank_amount { number }
+PATCH http://localhost:4400/api/v1/ranked-players/decrease_rank
+### Increase a user's  money: optional queries (default: 1000): money_amount { number }
+PATCH http://localhost:4400/api/v1/ranked-players/increase_money
+### Descrease a user's  money: optional queries (default: 1000): money_amount { number }
+PATCH http://localhost:4400/api/v1/ranked-players/decrease_money
