@@ -34,4 +34,21 @@ async function insertMultiPlayers(playersList) {
     })
 }
 
-module.exports = { resJsonLengthAndData, getAllPlayersFromRedis, insertMultiPlayers }
+function createOnePlayerForRedisById(id) {
+  const randomRanked = Math.floor(Math.random() * 100)
+  const data = JSON.stringify({
+    playerId: id,
+    rank: randomRanked,
+    todayRank: randomRanked,
+    yesterdayRank: 0,
+    isThisWeekActive: true,
+  })
+  return data
+}
+
+module.exports = {
+  resJsonLengthAndData,
+  getAllPlayersFromRedis,
+  insertMultiPlayers,
+  createOnePlayerForRedisById,
+}
