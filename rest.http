@@ -1,0 +1,39 @@
+### Get the index route
+GET http://localhost:4400/api/v1/
+
+### Get players: optional queries: page { number }, size { number }
+GET http://localhost:4400/api/v1/players
+
+### Get one player by Id: param: id { string }
+GET http://localhost:4400/api/v1/players/:playerId
+
+
+### Create fake players: optional queries: user_numbers { number } , is_this_week_active { boolean }
+POST http://localhost:4400/api/v1/players
+
+### DELETE all players in MongoDB and Redis
+DELETE http://localhost:4400/api/v1/players
+
+
+
+### Get best ranked 100 players
+GET http://localhost:4400/api/v1/ranked-players
+
+### Create random ranked players by pulling the id of the players found in mongodb
+POST http://localhost:4400/api/v1/ranked-players
+
+
+### Get specified player by id
+GET http://localhost:4400/api/v1/ranked-players/:playerId
+
+### Increase a user's rank: query: rank_amount { number }
+PUT  http://localhost:4400/api/v1/ranked-players/:playerId?increase_rank=5&bebe=2
+
+### Decrease a user's rank: query: rank_amount { number }
+PUT http://localhost:4400/api/v1/ranked-players/:playerId?decrease_rank=5
+
+### Increase a user's money: query: money_amount { number }
+PUT http://localhost:4400/api/v1/ranked-players/:playerId?increase_money=1000
+
+### Descrease a user's money: query: money_amount { number }
+PUT http://localhost:4400/api/v1/ranked-players/:playerId?decrease_money=1000
