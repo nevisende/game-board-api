@@ -14,6 +14,13 @@ async function getPlayersByPageAndSize(req, res) {
   resJsonLengthAndData(res, data)
 }
 
+async function getOnePlayerById(req, res) {
+  const { playerId } = req.params
+
+  const player = await Player.findById(playerId)
+  res.status(200).json({ status: 'success', data: player })
+}
+
 async function createFakePlayers(req, res) {
   const userNumbers = req.query.user_numbers || 150
   const isThisWeekActive = req.query.is_this_week_active || true
@@ -52,4 +59,9 @@ async function deleteAllPlayers(req, res) {
   await index.redisClient.flushAll()
 }
 
-module.exports = { getPlayersByPageAndSize, createFakePlayers, deleteAllPlayers }
+module.exports = {
+  getPlayersByPageAndSize,
+  createFakePlayers,
+  deleteAllPlayers,
+  getOnePlayerById,
+}
