@@ -1,29 +1,17 @@
 const randomWords = require('random-words');
 const Player = require('../models/playersModel')
 const index = require('../index')
-const { resJsonLengthAndData } = require('../helpers')
+const { resJsonLengthAndData, insertMultiPlayers } = require('../helpers')
 
-async function getPlayers(req, res) {
+async function getPlayersByPageAndSize(req, res) {
   const { page = 1, size = 20 } = req.query
 
   const limit = parseInt(size, 10)
   const skip = (page - 1) * limit
 
   const players = await Player.find().limit(limit).skip(skip)
-
-  resJsonLengthAndData(res, players)
-}
-
-async function insertMultiPlayers(playersList) {
-  const playerNumbers = playersList.length
-  await Player
-    .insertMany(playersList)
-    .then(() => {
-      console.log(`${playerNumbers} fake user${(playerNumbers > 1) ? 's' : ''} created.`)
-    })
-    .catch((err) => {
-      console.error(err)
-    })
+  const data = { page, limit, players }
+  resJsonLengthAndData(res, data)
 }
 
 async function createFakePlayers(req, res) {
@@ -64,4 +52,4 @@ async function deleteAllPlayers(req, res) {
   await index.redisClient.flushAll()
 }
 
-module.exports = { getPlayers, createFakePlayers, deleteAllPlayers }
+module.exports = { getPlayersByPageAndSize, createFakePlayers, deleteAllPlayers }
