@@ -1,11 +1,11 @@
 const express = require('express')
-const { getPlayers, createFakePlayers, deleteAllPlayers } = require('../controllers/playersController')
+const { getPlayersByPageAndSize, createFakePlayers, deleteAllPlayers } = require('../controllers/playersController')
 
 const router = express.Router()
 
 router
   .route('/')
-  .get(getPlayers)
+  .get(getPlayersByPageAndSize)
   .post(createFakePlayers)
   .delete(deleteAllPlayers)
 
