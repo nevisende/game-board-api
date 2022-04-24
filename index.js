@@ -13,7 +13,8 @@ const {
   REDIS_PORT,
 } = require('./config/config');
 
-const playerRoutes = require('./routes/players')
+const playerRoutes = require('./routes/playersRoutes')
+const rankedPlayersRoutes = require('./routes/rankedPlayersRoutes')
 
 const DB_CONNECTION_URL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/?authSource=admin`;
 
@@ -62,6 +63,7 @@ app.get('/api/v1', (req, res) => {
 })
 
 app.use('/api/v1/players', playerRoutes)
+app.use('/api/v1/ranked-players', rankedPlayersRoutes)
 
 const PORT = process.env.PORT || 4400
 
