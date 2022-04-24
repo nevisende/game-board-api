@@ -1,11 +1,14 @@
 const express = require('express')
-const { getHighHundredRanked, createRankedPlayersFindingDB, getDetailsOfOnePlayerById } = require('../controllers/rankedPlayersController')
+const {
+  getHighHundredRanked, createRankedPlayersFindingDB, getDetailsOfOnePlayerById, updatePlayer,
+} = require('../controllers/rankedPlayersController')
 
 const router = express.Router()
 
 router
   .route('/:playerId')
   .get(getDetailsOfOnePlayerById)
+  .put(updatePlayer)
 
 router
   .route('/')
