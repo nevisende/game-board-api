@@ -4,6 +4,10 @@ GET http://localhost:4400/api/v1/
 ### Get players: optional queries: page { number }, size { number }
 GET http://localhost:4400/api/v1/players
 
+### Get one player by Id: param: id { string }
+GET http://localhost:4400/api/v1/players/:playerId
+
+
 ### Create fake players: optional queries: user_numbers { number } , is_this_week_active { boolean }
 POST http://localhost:4400/api/v1/players
 
@@ -20,16 +24,16 @@ POST http://localhost:4400/api/v1/ranked-players
 
 
 ### Get specified player by id
-GET http://localhost:4400/api/v1/ranked-players/{id}
+GET http://localhost:4400/api/v1/ranked-players/:playerId
 
-### Increase a user's rank: optional queries (default: 5): rank_amount { number }
-PATCH  http://localhost:4400/api/v1/ranked-players/increase_rank
+### Increase a user's rank: query: rank_amount { number }
+PUT  http://localhost:4400/api/v1/ranked-players/:playerId?increase_rank=5&bebe=2
 
-### Decrease a user's  rank: optional queries (default: 5): rank_amount { number }
-PATCH http://localhost:4400/api/v1/ranked-players/decrease_rank
+### Decrease a user's rank: query: rank_amount { number }
+PUT http://localhost:4400/api/v1/ranked-players/:playerId?decrease_rank=5
 
-### Increase a user's  money: optional queries (default: 1000): money_amount { number }
-PATCH http://localhost:4400/api/v1/ranked-players/increase_money
+### Increase a user's money: query: money_amount { number }
+PUT http://localhost:4400/api/v1/ranked-players/:playerId?increase_money=1000
 
-### Descrease a user's  money: optional queries (default: 1000): money_amount { number }
-PATCH http://localhost:4400/api/v1/ranked-players/decrease_money
+### Descrease a user's money: query: money_amount { number }
+PUT http://localhost:4400/api/v1/ranked-players/:playerId?decrease_money=1000
