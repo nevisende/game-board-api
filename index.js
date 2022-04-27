@@ -4,6 +4,8 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const redis = require('redis')
 const cron = require('cron')
+const swaggerUi = require('swagger-ui-express')
+const swaggerDocs = require('./swagger.json')
 
 const {
   MONGO_USER,
@@ -84,6 +86,7 @@ app.get('/api/v1', (req, res) => {
   })
 })
 
+app.use('/api/v1/documentation', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 app.use('/api/v1/players', playerRoutes)
 app.use('/api/v1/ranked-players', rankedPlayersRoutes)
 app.use('/api/v1/leader-board', leaderBoardRoutes)

@@ -27,7 +27,7 @@ POST http://localhost:4400/api/v1/ranked-players
 GET http://localhost:4400/api/v1/ranked-players/6268721bd860cb9b548064cc
 
 ### Increase a user's rank: query: increse_rank { number }
-PUT  http://localhost:4400/api/v1/ranked-players/6268721bd860cb9b548064cc?increase_rank=5&bebe=2
+PUT  http://localhost:4400/api/v1/ranked-players/6268721bd860cb9b548064cc?increase_rank=5
 
 ### Decrease a user's rank: query: decrese_rank { number }
 PUT http://localhost:4400/api/v1/ranked-players/6268721bd860cb9b548064cc?decrease_rank=5

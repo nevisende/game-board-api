@@ -1,0 +1,411 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Game Board API",
+    "description": "That is a task project given by Pantheon company.",
+    "contact": {
+      "email" : "furkandenizhan@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4400/api/v1",
+      "description": "Test API"
+    }
+  ],
+  "paths": {
+    "/players": {
+      "get": {
+        "summary": "Get players from MongoDb",
+        "tags": ["Players"],
+        "parameters" : [{
+            "name": "page",
+            "in": "query",
+            "description": "Optional params, default: 1",
+            "required": false
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Optional params, default: 20",
+            "required": false
+          }],
+        "responses": {
+          "400": {
+            "description": "#/components/schemas/FailMessage"
+          },
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "$ref": "#/components/schemas/PlayerOnMongoDB"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create fake players on MongoDb",
+        "description": "You can create users on MongoDB and that players object is the PlayerOnMongoDB schemas object.",
+        "tags": ["Players"],
+        "parameters" : [{
+            "name": "user_numbers",
+            "in": "query",
+            "description": "Optional params, default: 150",
+            "required": false
+          },
+          {
+            "name": "is_this_week_active",
+            "in": "query",
+            "description": "Optional params, default: true",
+            "required": false
+          }],
+        "responses": {
+          "400": {
+            "description": "#/components/schemas/FailMessage"
+          },
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/SuccessMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete players from all databases including redis",
+        "tags": ["Players"],
+        "responses": {
+          "400": {
+            "description": "#/components/schemas/FailMessage"
+          },
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/SuccessMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/players/{playerId}": {
+      "get": {
+        "summary": "Get a player by Id from MongoDb",
+        "tags": ["Players"],
+        "parameters" : [{
+            "name": "playerId",
+            "in": "path",
+            "required": true
+          }],
+        "responses": {
+          "400": {
+            "description": "#/components/schemas/FailMessage"
+          },
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/PlayerOnMongoDB"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ranked-players": {
+      "get": {
+        "summary": "Get best-ranked players from Redis inside an array",
+        "tags": ["Ranked Players"],
+        "responses": {
+          "400": {
+            "description": "#/components/schemas/FailMessage"
+          },
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "$ref": "#/components/schemas/PlayerOnRedis"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create random ranked players by pulling the id of the players found in mongodb",
+        "description": "You can create users on Redis and that players object is the PlayerOnRedis schemas object.",
+        "tags": ["Ranked Players"],
+        "responses": {
+          "400": {
+            "description": "#/components/schemas/FailMessage"
+          },
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/SuccessMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    
+    "/ranked-players/{playerId}": {
+      "get": {
+        "summary": "Get a player by Id from Redis",
+        "tags": ["Ranked Players"],
+        "parameters" : [{
+            "name": "playerId",
+            "in": "path",
+            "required": true
+          }],
+        "responses": {
+          "400": {
+            "description": "#/components/schemas/FailMessage"
+          },
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/PlayerOnRedis"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update players money or rank by Id",
+        "description": "You can change one player's money or rank with one query.Just one query'll apply ",
+        "tags": ["Ranked Players"],
+        "parameters" : [{
+            "name": "playerId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "increase_rank",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "decrease_rank",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "increase_money",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "decrease_money",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "#/components/schemas/FailMessage"
+          },
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/SuccessMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/leader-board": {
+      "get": {
+        "summary": "Get all data about highest 100 ranked players",
+        "tags": ["Leader Board"],
+        "responses": {
+          "400": {
+            "description": "#/components/schemas/FailMessage"
+          },
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "$ref": "#/components/schemas/PlayerCollectedDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/leader-board/{playerId}": {
+      "get": {
+        "summary": "Get all data about a player by Id",
+        "tags": ["Leader Board"],
+        "parameters" : [{
+            "name": "playerId",
+            "in": "path",
+            "required": true
+          }],
+        "responses": {
+          "400": {
+            "description": "#/components/schemas/FailMessage"
+          },
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "$ref": "#/components/schemas/PlayerCollectedDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/collect-and-share-moneys": {
+      "post": {
+        "summary": "Collect money and distribute money among users according to their rank ",
+        "tags": ["Admin"],
+        "responses": {
+          "400": {
+            "description": "#/components/schemas/FailMessage"
+          },
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "$ref": "#/components/schemas/SuccessMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PlayerOnMongoDB": {
+        "type": "object",
+        "properties": {
+          "_id" : {
+            "type": "string"
+          },
+          "username" : {
+            "type": "string"
+          },
+          "country" : {
+            "type": "string"
+          },
+          "money" : {
+            "type": "number"
+          },
+          "isThisWeekActive" : {
+            "type": "number"
+          },
+          "earnedMoneyThisWeek" : {
+            "type": "number"
+          },
+          "_v": {
+            "type": "string"
+          }
+        }
+      },
+      "PlayerOnRedis": {
+        "type": "object",
+        "properties": {
+          "playerId" : {
+            "type": "string"
+          },
+          "rank" : {
+            "type": "number"
+          },
+          "todayRank" : {
+            "type": "number"
+          },
+          "yesterdayRank" : {
+            "type": "number"
+          },
+          "isThisWeekActive" : {
+            "type": "boolean"
+          }
+        }
+      },
+      "PlayerCollectedDetails": {
+        "type": "object",
+        "properties": {
+          "playerId" : {
+            "type": "string"
+          },
+          "rank" : {
+            "type": "number"
+          },
+          "rankDiff" : {
+            "type": "number"
+          },
+          "name" : {
+            "type": "number"
+          },
+          "country" : {
+            "type": "string"
+          },
+          "money": {
+            "type": "number"
+          }
+        }
+      },
+      "SuccessMessage": {
+        "type": "object",
+        "properties": {
+          "status" : {
+            "type": "string"
+          }
+        }
+      },
+      "FailMessage": {
+        "type": "object",
+        "properties": {
+          "status" : {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

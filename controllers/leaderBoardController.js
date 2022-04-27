@@ -9,6 +9,7 @@ async function getAllDetailsOfPlayers(req, res, next) {
           .slice(0, 100),
       ).then(async (redisList) => {
         await collectAllDetailsFromDbByRedisList(redisList).then((collectedAllDetails) => {
+          collectedAllDetails.sort((a, b) => b.rank - a.rank)
           res.status(200).json({ status: 'success', data: collectedAllDetails })
         })
       })
