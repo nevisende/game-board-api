@@ -1,29 +1,38 @@
-const { resJsonLengthAndData, getAllPlayersFromRedis, createOnePlayerForRedisById } = require('../helpers')
+const { resJsonLengthAndData, getAllPlayersFromRedis, createOnePlayerForRedisById: createOnePlayerObjForRedisById } = require('../helpers')
 const Player = require('../models/playersModel')
 const indexPage = require('../index')
 
 async function getHighHundredRanked(req, res) {
   try {
-    const hundredPlayers = await getAllPlayersFromRedis()
-      .then((players) => players.sort((a, b) => b.rank - a.rank).slice(0, 100))
-    resJsonLengthAndData(res, hundredPlayers)
+    if (await (await indexPage.redisClient.keys('*')).length === 0) {
+      resJsonLengthAndData(res, [])
+    } else {
+      const hundredPlayers = await getAllPlayersFromRedis()
+        .then((players) => players.sort((a, b) => b.rank - a.rank).slice(0, 100))
+      resJsonLengthAndData(res, hundredPlayers)
+    }
   } catch (err) {
-    console.log(err)
+    console.error(err)
     res.status(404).json({ status: 'fail' })
   }
 }
 
-async function createRankedPlayersFindingDB(req, res) {
-  await Player.find().exec((err, players) => {
-    players.forEach((player) => {
-      const data = createOnePlayerForRedisById(player.id)
-      indexPage.redisClient.set(`Player-${player.id}`, data)
-    })
-  });
+async function createRankedPlayersFindingDB(req, res, next) {
+  try {
+    await Player.find().exec((err, players) => {
+      players.forEach((player) => {
+        const data = createOnePlayerObjForRedisById(player.id)
+        indexPage.redisClient.set(`Player-${player.id}`, data)
+      })
+    });
 
-  res.status(200).json({ status: 'success' })
+    res.status(200).json({ status: 'success' })
+  } catch (err) {
+    next(err)
+  }
 }
-async function getDetailsOfOnePlayerById(req, res) {
+
+async function getDetailsOfOnePlayerById(req, res, next) {
   try {
     const allPlayers = await getAllPlayersFromRedis()
       .then((players) => players.sort((a, b) => b.rank - a.rank))
@@ -33,13 +42,12 @@ async function getDetailsOfOnePlayerById(req, res) {
     if (indexOfPlayer === -1) {
       res.status(404).json({ status: 'fail', message: 'No user found' })
     }
-    const arrayIncludesOtherFourPlayers = allPlayers.slice(indexOfPlayer - 3, indexOfPlayer + 3)
-    const data = { indexOfPlayer, player, arrayIncludesOtherFourPlayers }
+    const arrayIncludesOtherFivePlayers = allPlayers.slice(indexOfPlayer - 3, indexOfPlayer + 3)
+    const data = { indexOfPlayer, player, arrayIncludesOtherFivePlayers }
 
     res.json({ status: 'success', data })
   } catch (err) {
-    console.log(err)
-    res.status(404).json({ status: 'fail' })
+    next(err)
   }
 }
 
@@ -57,12 +65,13 @@ async function updatePlayer(req, res) {
     if (await indexPage.redisClient.get(playerRedisId)) {
       playerOnRedis = JSON.parse(await indexPage.redisClient.get(playerRedisId))
     } else {
-      const data = createOnePlayerForRedisById(playerId)
-      await indexPage.redisClient.set(`Player-${playerId}`, data)
+      const data = createOnePlayerObjForRedisById(playerId)
+      await indexPage.redisClient.set(playerRedisId, data)
+      playerOnRedis = data
     }
 
     const playerOnMongoDB = await Player.findById(playerId)
-    let newData
+    let newData = playerOnRedis
 
     switch (orderName) {
       case 'increase_rank':
@@ -73,7 +82,7 @@ async function updatePlayer(req, res) {
         }
 
         if (playerOnRedis.isThisWeekActive === false) {
-          await Player.findByIdAndUpdate({ isThisWeekActive: true })
+          await Player.findByIdAndUpdate(playerId, { isThisWeekActive: true })
         }
 
         break;
@@ -89,17 +98,23 @@ async function updatePlayer(req, res) {
         }
         break;
       case 'increase_money':
-        await Player.findByIdAndUpdate(playerId, { money: playerOnMongoDB.money + orderAmount })
+        await Player.findByIdAndUpdate(playerId, {
+          money: playerOnMongoDB.money + orderAmount,
+          earnedMoneyThisWeek: playerOnMongoDB.earnedMoneyThisWeek + orderAmount,
+        })
         break;
       case 'decrease_money':
-        await Player.findByIdAndUpdate(playerId, { money: playerOnMongoDB.money - orderAmount })
+        await Player.findByIdAndUpdate(playerId, {
+          money: playerOnMongoDB.money - orderAmount,
+          earnedMoneyThisWeek: playerOnMongoDB.earnedMoneyThisWeek - orderAmount,
+        })
         break;
       default:
         newData = playerOnRedis
     }
 
-    indexPage.redisClient.set(playerRedisId, JSON.stringify(newData))
-    res.send(Object.keys(order)[0])
+    await indexPage.redisClient.set(playerRedisId, JSON.stringify(newData))
+    res.status(200).json({ status: 'success' })
   } catch (err) {
     console.log(err)
     res.status(404).json({ status: 'fail' })

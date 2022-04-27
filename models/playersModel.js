@@ -18,6 +18,10 @@ const playerSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  earnedMoneyThisWeek: {
+    type: Number,
+    default: 0,
+  },
 })
 
 const Player = mongoose.model('Player', playerSchema)

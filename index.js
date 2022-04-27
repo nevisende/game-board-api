@@ -2,7 +2,8 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
-const redis = require('redis');
+const redis = require('redis')
+const cron = require('cron')
 
 const {
   MONGO_USER,
@@ -15,7 +16,26 @@ const {
 
 const playerRoutes = require('./routes/playersRoutes')
 const rankedPlayersRoutes = require('./routes/rankedPlayersRoutes')
+const leaderBoardRoutes = require('./routes/leaderBoardRoutes')
+const adminRoutes = require('./routes/adminRoutes')
+const { collectMoneyEarnedByAllPlayersInPrizePool, givePrizesToTopHundredPlayers } = require('./helpers')
 
+// Cron configs: run every monday at 1am
+const mondayAtOneAm = '0 0 0 * * 1'
+const cronTimeForWeeklyPrize = new cron.CronJob(mondayAtOneAm, async () => {
+  try {
+    const percent = 2
+    await collectMoneyEarnedByAllPlayersInPrizePool(percent)
+      .then(async () => {
+        await givePrizesToTopHundredPlayers()
+      }).catch((err) => console.error(err))
+  } catch (err) {
+    console.error(err)
+  }
+})
+cronTimeForWeeklyPrize.start()
+
+// MongoDB configs:
 const DB_CONNECTION_URL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/?authSource=admin`;
 
 const connectDbWithRetry = () => {
@@ -33,6 +53,7 @@ const connectDbWithRetry = () => {
 
 connectDbWithRetry();
 
+// Redis configs:
 const redisClient = redis.createClient({ url: `redis://${REDIS_URL}:${REDIS_PORT}` });
 
 redisClient.on('connect', () => {
@@ -45,6 +66,7 @@ redisClient.on('error', (err) => {
 
 redisClient.connect();
 
+// Express configs:
 const app = express()
 
 app.enable('trust proxy')
@@ -64,20 +86,10 @@ app.get('/api/v1', (req, res) => {
 
 app.use('/api/v1/players', playerRoutes)
 app.use('/api/v1/ranked-players', rankedPlayersRoutes)
+app.use('/api/v1/leader-board', leaderBoardRoutes)
+app.use('/api/v1/admin', adminRoutes)
 
 const PORT = process.env.PORT || 4400
-
-mongoose
-  .connect(DB_CONNECTION_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log('Connected to DB')
-  })
-  .catch((err) => {
-    console.error(err)
-  })
 
 app.listen(PORT, () => { console.log(`Game board server is listening on ${PORT}`) })
 exports.redisClient = redisClient

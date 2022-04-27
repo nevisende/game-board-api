@@ -1,24 +1,32 @@
 const randomWords = require('random-words');
 const Player = require('../models/playersModel')
-const index = require('../index')
+const indexPage = require('../index')
 const { resJsonLengthAndData, insertMultiPlayers } = require('../helpers')
 
-async function getPlayersByPageAndSize(req, res) {
-  const { page = 1, size = 20 } = req.query
+async function getPlayersByPageAndSize(req, res, next) {
+  try {
+    const { page = 1, size = 20 } = req.query
 
-  const limit = parseInt(size, 10)
-  const skip = (page - 1) * limit
+    const limit = parseInt(size, 10)
+    const skip = (page - 1) * limit
 
-  const players = await Player.find().limit(limit).skip(skip)
-  const data = { page, limit, players }
-  resJsonLengthAndData(res, data)
+    const players = await Player.find().limit(limit).skip(skip)
+    const data = { page, limit, players }
+    resJsonLengthAndData(res, data)
+  } catch (err) {
+    next(err)
+  }
 }
 
-async function getOnePlayerById(req, res) {
-  const { playerId } = req.params
+async function getOnePlayerById(req, res, next) {
+  try {
+    const { playerId } = req.params
 
-  const player = await Player.findById(playerId)
-  res.status(200).json({ status: 'success', data: player })
+    const player = await Player.findById(playerId)
+    res.status(200).json({ status: 'success', data: player })
+  } catch (err) {
+    next(err)
+  }
 }
 
 async function createFakePlayers(req, res) {
@@ -46,7 +54,7 @@ async function createFakePlayers(req, res) {
     await insertMultiPlayers(playersList)
     res.status(200).json({ status: 'success' })
   } catch (err) {
-    console.log(err)
+    console.error(err)
     res.status(400).json({ status: 'fail' })
   }
 }
@@ -56,7 +64,7 @@ async function deleteAllPlayers(req, res) {
     res.status(200).json({ status: 'success' })
   })
 
-  await index.redisClient.flushAll()
+  await indexPage.redisClient.flushAll()
 }
 
 module.exports = {
