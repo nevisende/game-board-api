@@ -1,0 +1,50 @@
+### Get the index route
+GET http://localhost:4400/api/v1/
+
+### Get players: optional queries: page { number }, size { number }
+GET http://localhost:4400/api/v1/players
+
+### Get one player by Id: param: id { string }
+GET http://localhost:4400/api/v1/players/6268721bd860cb9b548064cc
+
+
+### Create fake players: optional queries: user_numbers { number } , is_this_week_active { boolean }
+POST http://localhost:4400/api/v1/players
+
+### DELETE all players in MongoDB and Redis
+DELETE http://localhost:4400/api/v1/players
+
+
+
+### Get best ranked 100 players
+GET http://localhost:4400/api/v1/ranked-players
+
+### Create random ranked players by pulling the id of the players found in mongodb
+POST http://localhost:4400/api/v1/ranked-players
+
+
+### Get specified player by id
+GET http://localhost:4400/api/v1/ranked-players/6268721bd860cb9b548064cc
+
+### Increase a user's rank: query: increse_rank { number }
+PUT  http://localhost:4400/api/v1/ranked-players/6268721bd860cb9b548064cc?increase_rank=5&bebe=2
+
+### Decrease a user's rank: query: decrese_rank { number }
+PUT http://localhost:4400/api/v1/ranked-players/6268721bd860cb9b548064cc?decrease_rank=5
+
+### Increase a user's money: query: increase_money { number }
+PUT http://localhost:4400/api/v1/ranked-players/6268721bd860cb9b548064cc?increase_money=1000
+
+### Descrease a user's money: query: decrease_money { number }
+PUT http://localhost:4400/api/v1/ranked-players/6268721bd860cb9b548064cc?decrease_money=1000
+
+
+
+### Get all data about players:
+GET http://localhost:4400/api/v1/leader-board
+
+### Collect money:
+POST http://localhost:4400/api/v1/admin/collect-and-share-moneys
+
+### Get all data about players:
+GET http://localhost:4400/api/v1/leader-board/6268721bd860cb9b548064cb
