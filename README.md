@@ -15,8 +15,7 @@ That is it. Now you can enjoy the project :)
 ### To test manually and see the documentation of the project:
 When you run the docker compose and can access the api write this address on your browser
 `http://localhost:4400/api/v1/documentation/`
-### Video Presentation
-[Click here to watch](https://youtu.be/NhSzUXOqurI)
+
 
 ## Author
 
